@@ -42,13 +42,13 @@ function applyFilter(data: { questions: any[] }, filter: FilterClauseType, fValu
     }
 }
 
-function dateFilterCheck(f: FilterClauseType): string|number {
+function dateFilterCheck(f: FilterClauseType): string | number {
     if (typeof f.value === 'string' && f.value.includes('-')) {
         const date = Date.parse(f.value);
         if (!isNaN(date)) {
             return date;
         }
-    } else if(typeof f.value === 'string' && !isNaN(parseInt(f.value))) {
+    } else if (typeof f.value === 'string' && !isNaN(parseInt(f.value))) {
         return +f.value;
     }
     return f.value;
@@ -75,10 +75,12 @@ app.get('/:formId/filteredResponses', async (req: Request<any, any, any, { filte
         });
 
     let data: any = result.responses
-    filters.forEach(f => {
-        const fValue = dateFilterCheck(f);
-        data = data.filter(d => applyFilter(d, f, fValue))
-    });
+    if (filters) {
+        filters.forEach(f => {
+            const fValue = dateFilterCheck(f);
+            data = data.filter(d => applyFilter(d, f, fValue))
+        });
+    }
 
     result.responses = data;
     res.send(result);
